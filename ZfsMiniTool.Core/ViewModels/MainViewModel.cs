@@ -1,0 +1,81 @@
+﻿using Microsoft.Extensions.Configuration;
+using ZfsMiniTool.Core.Extensions;
+using ZfsMiniTool.Core.Services;
+
+namespace ZfsMiniTool.Core.ViewModels;
+internal class MainViewModel
+{
+    private OpenZfsService openZfsService;
+    private FileSystemService fileSystemService;
+
+    public MainViewModel(OpenZfsService openZfsService, FileSystemService fileSystemService)
+    {
+        this.openZfsService = openZfsService;
+        this.fileSystemService = fileSystemService;
+    }
+
+    public void ImportPool(string poolName)
+    {
+        openZfsService.ImportPool(poolName);
+    }
+
+    public void StoreHexKeyAsBinaryFile(string dirPath, string filename, string key)
+    {
+        if (key.Length != 64)
+            throw new ArgumentException("Key has to have exactly 64 hex characters");
+
+        byte[] data = key.HexToBytes();
+
+        fileSystemService.StoreToDisk(dirPath, filename, data, ".zkey");
+    }
+
+    public IEnumerable<string> GetKeyFilesFrom(string dir)
+    {
+        return fileSystemService.GetFilesFromDirectory(dir, ".zkey");
+    }
+
+    public void LoadKey(string poolName, string keyPath)
+    {
+        openZfsService.LoadKey(poolName, keyPath);
+    }
+
+    public void SetDriveLetter(string datasetName, char driveLetter)
+    {
+        openZfsService.SetDriveLetter(datasetName, true, driveLetter);
+    }
+
+    public void SetDriveLetterAuto(string datasetName)
+    {
+        openZfsService.SetDriveLetter(datasetName, true);
+    }
+
+    public void DisableDriveLetter(string datasetName)
+    {
+        openZfsService.SetDriveLetter(datasetName, false);
+    }
+
+    public void MountDataset(string datasetName)
+    {
+        openZfsService.MountDataset(datasetName);
+    }
+
+    public List<string> ListDatasets(string poolName)
+    {
+        return openZfsService.ListDatasets(poolName);
+    }
+
+    public string ListDatasetsDetailed(string poolName)
+    {
+        return openZfsService.ListDatasetsDetailed(poolName);
+    }
+
+    public List<string> ListImportablePools()
+    {
+        return openZfsService.ListImportablePools();
+    }
+
+    public string ListImportablePoolsDetailed()
+    {
+        return openZfsService.ListImportablePoolsDetailed();
+    }
+}
