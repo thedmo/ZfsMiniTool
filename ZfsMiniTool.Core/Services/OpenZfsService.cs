@@ -57,9 +57,33 @@ internal class OpenZfsService
         return outBuilder.ToString();
     }
 
-    // Wrapper‑Methoden für die einzelnen ZFS‑Operationen
-    public void ExportPool(string pool) => Run("zpool", $"export {pool}");
+
+    public void CreateFileBasedPool(string poolName, string directory, long sizeInMB) {
+		// Create a sparse file of the specified size
+		using (var fs = new FileStream(directory, FileMode.Create, FileAccess.Write, FileShare.None)) {
+			fs.SetLength(sizeInMB * 1024 * 1024);
+		}
+
+        var fullPath = Path.Combine(directory, poolName, ".zdev");
+
+		Run("fsutil", $"{fullPath}");
+
+		// Create the ZFS pool using the sparse file
+		Run("zpool", @$"create {poolName} \\?\{fullPath}");
+	}
+
+    public string ImportPoolFromFile(string filePath) { 
+        var poolName = Path.GetFileNameWithoutExtension(filePath);
+		return Run("zpool", $"import -d {filePath} {poolName}");
+	}
+
+	// Wrapper‑Methoden für die einzelnen ZFS‑Operationen
+	public void ExportPool(string pool) => Run("zpool", $"export {pool}");
     public void ImportPool(string pool) => Run("zpool", $"import {pool}");
+
+    public void ImportPoolFromFile(string poolName, string path) {
+		Run("zpool", $"import -d {path} {poolName}");
+	}
 
     public void LoadKey(string pool, string keyFile)
     {
