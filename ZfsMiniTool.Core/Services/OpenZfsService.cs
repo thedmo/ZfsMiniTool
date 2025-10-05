@@ -174,7 +174,18 @@ internal class OpenZfsService
     {
         // -o name gibt nur die Pool-Namen aus
         string output = Run("zpool", "import -o name");
+        return GetPoolsFromOutput(output);
+    }
 
+    public List<string> ListImportablePoolsFromDirectory(string directory)
+    {
+        string output = Run("zpool", $"import -d {directory}");
+
+        return GetPoolsFromOutput(output);
+    }
+
+    private static List<string> GetPoolsFromOutput(string output)
+    {
         var pools = new List<string>();
         var lines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
@@ -192,6 +203,7 @@ internal class OpenZfsService
 
         return pools;
     }
+
 
     /// <summary>
     /// Listet alle importierbaren Pools mit detaillierten Informationen auf.

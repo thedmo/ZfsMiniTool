@@ -74,6 +74,11 @@ internal class MainViewModel
         return openZfsService.ListImportablePools();
     }
 
+    public List<string> ListImportablePoolsFromDirectory(string dir)
+    {
+        return openZfsService.ListImportablePoolsFromDirectory(dir);
+    }
+
     public string ListImportablePoolsDetailed()
     {
         return openZfsService.ListImportablePoolsDetailed();
