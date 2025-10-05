@@ -1,12 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ZfsMiniTool.Core.Configurations;
-using ZfsMiniTool.Core.Services;
+﻿using ZfsMiniTool.Core.Services;
 using ZfsMiniTool.Core.Utilities;
 using ZfsMiniTool.Core.ViewModels;
 
@@ -15,11 +7,33 @@ internal class MainViewCli
 {
     private MainViewModel dataContext;
     private ConfigurationService configuration;
+    private bool isRunning = true;
+
+    List<CliMenuItem> cliMenuItems;
 
     public MainViewCli(MainViewModel mainViewModel, ConfigurationService config)
     {
         dataContext = mainViewModel;
         configuration = config;
+
+        cliMenuItems = new List<CliMenuItem>() {
+        new (){MenuSwitch ="1",  Description = "Importierbare Pools auflisten", ItemAction = ShowSimpleImportablePoolsList },
+        new (){MenuSwitch ="2",  Description = "Importierbare Pools in Verzeichnis auflisten", ItemAction = ShowSimpleImportablePoolsListFromdirectory },
+        new (){MenuSwitch ="3",  Description = "Pool importieren",ItemAction = ImportPoolOperation },
+        new (){MenuSwitch ="4",  Description = "Schlüssel laden",ItemAction = ImportHexKeyOperation },
+        new (){MenuSwitch ="5",  Description = "Drive-Letter setzen",ItemAction = SetDriveLetterOperation },
+        new (){MenuSwitch ="6",  Description = "Dataset mounten",ItemAction = MountDatasetOperation },
+        new (){MenuSwitch ="7",  Description = "Datasets auflisten",ItemAction = ListDatasetsOperation},
+        new (){MenuSwitch ="8",  Description = "Vollständige Sequenz ausführen",ItemAction = RunFullSequence},
+        new (){MenuSwitch ="9",  Description = "Hex Key zu raw binary file",ItemAction = ImportHexKeyOperation},
+        new (){MenuSwitch ="10", Description = "List key that can be loaded",ItemAction = ListLoadableKeysOperation },
+        new (){MenuSwitch ="11", Description = "Beenden" , ItemAction = QuitApplication},
+        };
+    }
+
+    private void QuitApplication()
+    {
+        isRunning = false;
     }
 
     public void Show()
@@ -27,80 +41,34 @@ internal class MainViewCli
         Console.WriteLine("=== ZFS Mini Tool (Administrator) ===");
         Console.WriteLine();
 
-        while (true)
+        while (isRunning)
         {
             ShowMenu();
             var choice = Console.ReadLine();
 
             try
             {
-                switch (choice)
-                {
-                    case "1":
-                        ListImportablePoolsOperation();
-                        break;
-                    case "2":
-                        ImportPoolOperation();
-                        break;
-                    case "3":
-                        LoadKeyOperation();
-                        break;
-                    case "4":
-                        SetDriveLetterOperation();
-                        break;
-                    case "5":
-                        MountDatasetOperation();
-                        break;
-                    case "6":
-                        ListDatasetsOperation();
-                        break;
-                    case "7":
-                        RunFullSequence();
-                        break;
+                if (cliMenuItems.FirstOrDefault(entry => entry.MenuSwitch.Equals(choice)) is CliMenuItem menuItem)
+                    menuItem.ItemAction();
 
-                    case "8":
-                        ImportHexKeyOperation();
-                        break;
-
-                    case "9":
-                        ListLoadableKeysOperation();
-                        break;
-
-                    case "0":
-                        Console.WriteLine("Auf Wiedersehen!");
-                        return;
-                    default:
-                        Console.WriteLine("Ungültige Auswahl. Bitte versuchen Sie es erneut.");
-                        break;
-                }
+                else
+                    Console.WriteLine("Input not recognized, please try again...");
             }
             catch (Exception ex)
             {
                 Console.Error.WriteLine($"Fehler: {ex.Message}");
             }
-
-            Console.WriteLine();
-            Console.WriteLine("Drücken Sie eine beliebige Taste, um fortzufahren...");
-            Console.ReadKey();
-            Console.Clear();
         }
     }
 
     private void ShowMenu()
     {
-        Console.WriteLine("Verfügbare Optionen:");
-        Console.WriteLine("1. Importierbare Pools auflisten");
-        Console.WriteLine("2. Pool importieren");
-        Console.WriteLine("3. Schlüssel laden");
-        Console.WriteLine("4. Drive-Letter setzen");
-        Console.WriteLine("5. Dataset mounten");
-        Console.WriteLine("6. Datasets auflisten");
-        Console.WriteLine("7. Vollständige Sequenz ausführen");
-        Console.WriteLine("8. Hex Key zu raw binary file");
-        Console.WriteLine("9. List key that can be loaded");
-        Console.WriteLine("0. Beenden");
+        Console.WriteLine("Available options:\n");
+        foreach (var menuItem in cliMenuItems)
+        {
+            Console.WriteLine($"{menuItem.MenuSwitch,5}: {menuItem.Description}\n");
+        }
         Console.WriteLine();
-        Console.Write("Ihre Wahl: ");
     }
 
     private void ImportPoolOperation()
@@ -121,7 +89,7 @@ internal class MainViewCli
 
     private void ImportHexKeyOperation()
     {
-        CliWhileItem cliWhileItem = new ();
+        CliWhileItem cliWhileItem = new();
 
         cliWhileItem.WhileYesTry(() =>
         {
@@ -158,7 +126,7 @@ internal class MainViewCli
 
             var list = dataContext.GetKeyFilesFrom(directory);
 
-            foreach ( var file in list)
+            foreach (var file in list)
             {
                 Console.WriteLine(file);
             }
@@ -399,32 +367,6 @@ internal class MainViewCli
         Console.WriteLine("Vollständige Sequenz erfolgreich abgeschlossen!");
     }
 
-    private void ListImportablePoolsOperation()
-    {
-        Console.WriteLine();
-        Console.WriteLine("Wählen Sie die Anzeigeart:");
-        Console.WriteLine("1. Einfache Liste (nur Pool-Namen)");
-        Console.WriteLine("2. Detaillierte Informationen");
-        Console.Write("Ihre Wahl: ");
-
-        var choice = Console.ReadLine();
-        Console.WriteLine();
-
-        switch (choice)
-        {
-            case "1":
-                ShowSimpleImportablePoolsList();
-                break;
-            case "2":
-                ShowDetailedImportablePoolsList();
-                break;
-            default:
-                Console.WriteLine("Ungültige Auswahl, zeige einfache Liste:");
-                ShowSimpleImportablePoolsList();
-                break;
-        }
-    }
-
     private void ShowSimpleImportablePoolsList()
     {
         Console.WriteLine("Importierbare Pools:");
@@ -444,6 +386,39 @@ internal class MainViewCli
             }
             Console.WriteLine();
             Console.WriteLine($"Insgesamt {pools.Count} Pool(s) verfügbar.");
+        }
+    }
+
+    private void ShowSimpleImportablePoolsListFromdirectory()
+    {
+
+        Console.WriteLine("Please provice directory:");
+        var input = Console.ReadLine();
+
+        if (!Path.Exists(input))
+        {
+            Console.WriteLine("Directory does not exist");
+        }
+        else
+        {
+            var pools = dataContext.ListImportablePoolsFromDirectory(input);
+
+            Console.WriteLine("Importierbare Pools:");
+            Console.WriteLine(new string('-', 40));
+
+            if (pools.Count == 0)
+            {
+                Console.WriteLine("Keine importierbaren Pools gefunden.");
+            }
+            else
+            {
+                for (int i = 0; i < pools.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {pools[i]}");
+                }
+                Console.WriteLine();
+                Console.WriteLine($"Insgesamt {pools.Count} Pool(s) verfügbar.");
+            }
         }
     }
 
