@@ -19,21 +19,6 @@ internal class MainViewModel
         openZfsService.ImportPool(poolName);
     }
 
-    public void StoreHexKeyAsBinaryFile(string dirPath, string filename, string key)
-    {
-        if (key.Length != 64)
-            throw new ArgumentException("Key has to have exactly 64 hex characters");
-
-        byte[] data = key.HexToBytes();
-
-        fileSystemService.StoreToDisk(dirPath, filename, data, ".zkey");
-    }
-
-    public IEnumerable<string> GetKeyFilesFrom(string dir)
-    {
-        return fileSystemService.GetFilesFromDirectory(dir, ".zkey");
-    }
-
     public void LoadKey(string poolName, string keyPath)
     {
         openZfsService.LoadKey(poolName, keyPath);
@@ -62,11 +47,6 @@ internal class MainViewModel
     public List<string> ListDatasets(string poolName)
     {
         return openZfsService.ListDatasets(poolName);
-    }
-
-    public string ListDatasetsDetailed(string poolName)
-    {
-        return openZfsService.ListDatasetsDetailed(poolName);
     }
 
     public List<string> ListImportablePools()
