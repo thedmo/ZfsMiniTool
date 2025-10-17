@@ -14,7 +14,7 @@ namespace ZfsMiniTool.Core
             FileSystemService fileSystemService = new FileSystemService();
 
             MainViewModel mainViewModel = new MainViewModel(openZfsService, fileSystemService);
-            MainViewCli view = new MainViewCli(mainViewModel, configService);
+            MainViewCli view = new (mainViewModel);
 
             view.Show();
         }

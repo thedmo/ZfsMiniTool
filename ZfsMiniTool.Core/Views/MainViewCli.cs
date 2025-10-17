@@ -5,25 +5,72 @@ using ZfsMiniTool.Core.ViewModels;
 namespace ZfsMiniTool.Core.Views;
 internal class MainViewCli {
 	private MainViewModel dataContext;
-	private ConfigurationService configuration;
 	private bool isRunning = true;
 
 	List<CliMenuItem> cliMenuItems;
 
-	public MainViewCli(MainViewModel mainViewModel, ConfigurationService config) {
+	public MainViewCli(MainViewModel mainViewModel) {
 		dataContext = mainViewModel;
-		configuration = config;
 
 		cliMenuItems = new List<CliMenuItem>() {
 		new (){MenuSwitch ="1",  Description = "Importierbare Pools auflisten", ItemAction = ShowSimpleImportablePoolsList },
 		new (){MenuSwitch ="2",  Description = "Importierbare Pools in Verzeichnis auflisten", ItemAction = ShowSimpleImportablePoolsListFromdirectory },
 		new (){MenuSwitch ="3",  Description = "Key laden",ItemAction = LoadKeyOperation },
 		new (){MenuSwitch ="4",  Description = "Pool importieren",ItemAction = ImportPoolOperation },
-		new (){MenuSwitch ="5",  Description = "Drive-Letter setzen",ItemAction = SetDriveLetterOperation },
-		new (){MenuSwitch ="6",  Description = "Dataset mounten",ItemAction = MountDatasetOperation },
-		new (){MenuSwitch ="7",  Description = "Datasets auflisten",ItemAction = ListDatasetsOperation},
+		new (){MenuSwitch ="5",  Description = "Pool aus Datei importieren",ItemAction = ImportPoolFromFile },
+		new (){MenuSwitch ="6",  Description = "Pool exportieren",ItemAction = ExportPool },
+		new (){MenuSwitch ="7",  Description = "Drive-Letter setzen",ItemAction = SetDriveLetterOperation },
+		new (){MenuSwitch ="8",  Description = "Dataset mounten",ItemAction = MountDatasetOperation },
+		new (){MenuSwitch ="9",  Description = "Datasets auflisten",ItemAction = ListDatasetsOperation},
 		new (){MenuSwitch ="q", Description = "Beenden" , ItemAction = QuitApplication},
 		};
+	}
+
+	private void ExportPool() {
+		CliWhileItem cliWhileItem = new();
+		cliWhileItem.WhileYesTry(() => {
+			Console.WriteLine("Pool name eingeben: ");
+			var poolName = Console.ReadLine();
+
+			if (string.IsNullOrWhiteSpace(poolName)) {
+				Console.WriteLine("Pool-Name darf nicht leer sein.");
+				return;
+			}
+
+			dataContext.ExportPool(poolName);
+		});
+	}
+
+	private void ImportPoolFromFile() {
+		CliWhileItem cliWhile = new();
+		cliWhile.WhileYesTry(() => {
+			Console.Write("Pool-Name eingeben: ");
+			var poolName = Console.ReadLine();
+
+			if (string.IsNullOrWhiteSpace(poolName)) {
+				Console.WriteLine("Pool-Name darf nicht leer sein.");
+				return;
+			}
+
+			Console.Write("Verzeichnis eingeben: ");
+			var directory = Console.ReadLine();
+
+			if (string.IsNullOrWhiteSpace(directory)) {
+				Console.WriteLine("Verzeichnis darf nicht leer sein");
+				return;
+			};
+
+			directory = directory.Replace("\"", "");
+
+			if (!Directory.Exists(directory)) {
+				Console.WriteLine("Verzeichnis existiert nicht.");
+				return;
+			}
+
+			Console.WriteLine($"Importiere Pool '{poolName}' von {directory}");
+			dataContext.ImportPoolFromFile(poolName, directory);
+			Console.WriteLine("Pool erfolgreich importiert!");
+		});
 	}
 
 	private void QuitApplication() {

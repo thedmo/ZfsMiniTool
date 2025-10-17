@@ -3,64 +3,60 @@ using ZfsMiniTool.Core.Extensions;
 using ZfsMiniTool.Core.Services;
 
 namespace ZfsMiniTool.Core.ViewModels;
-internal class MainViewModel
-{
-    private OpenZfsService openZfsService;
-    private FileSystemService fileSystemService;
+internal class MainViewModel {
+	private OpenZfsService openZfsService;
+	private FileSystemService fileSystemService;
 
-    public MainViewModel(OpenZfsService openZfsService, FileSystemService fileSystemService)
-    {
-        this.openZfsService = openZfsService;
-        this.fileSystemService = fileSystemService;
-    }
+	public MainViewModel(OpenZfsService openZfsService, FileSystemService fileSystemService) {
+		this.openZfsService = openZfsService;
+		this.fileSystemService = fileSystemService;
+	}
 
-    public void ImportPool(string poolName)
-    {
-        openZfsService.ImportPool(poolName);
-    }
+	public void ImportPool(string poolName) {
+		openZfsService.ImportPool(poolName);
+	}
 
-    public void LoadKey(string poolName, string keyPath)
-    {
-        openZfsService.LoadKey(poolName, keyPath);
-    }
+	public void ImportPoolFromFile(string poolName, string directory) {
+		openZfsService.ImportPoolFromFile(poolName, directory);
+	}
 
-    public void SetDriveLetter(string datasetName, char driveLetter)
-    {
-        openZfsService.SetDriveLetter(datasetName, true, driveLetter);
-    }
+	public void ExportPool(string poolName) {
+		openZfsService.ExportPool(poolName);
+	}
 
-    public void SetDriveLetterAuto(string datasetName)
-    {
-        openZfsService.SetDriveLetter(datasetName, true);
-    }
+	public void LoadKey(string poolName, string keyPath) {
+		openZfsService.LoadKey(poolName, keyPath);
+	}
 
-    public void DisableDriveLetter(string datasetName)
-    {
-        openZfsService.SetDriveLetter(datasetName, false);
-    }
+	public void SetDriveLetter(string datasetName, char driveLetter) {
+		openZfsService.SetDriveLetter(datasetName, true, driveLetter);
+	}
 
-    public void MountDataset(string datasetName)
-    {
-        openZfsService.MountDataset(datasetName);
-    }
+	public void SetDriveLetterAuto(string datasetName) {
+		openZfsService.SetDriveLetter(datasetName, true);
+	}
 
-    public List<string> ListDatasets(string poolName)
-    {
-        return openZfsService.ListDatasets(poolName);
-    }
+	public void DisableDriveLetter(string datasetName) {
+		openZfsService.SetDriveLetter(datasetName, false);
+	}
 
-    public List<string> ListImportablePools()
-    {
-        return openZfsService.ListImportablePools();
-    }
+	public void MountDataset(string datasetName) {
+		openZfsService.MountDataset(datasetName);
+	}
 
-    public List<string> ListImportablePoolsFromDirectory(string dir)
-    {
-        return openZfsService.ListImportablePoolsFromDirectory(dir);
-    }
+	public List<string> ListDatasets(string poolName) {
+		return openZfsService.ListDatasets(poolName);
+	}
 
-    public string ListImportablePoolsDetailed()
-    {
-        return openZfsService.ListImportablePoolsDetailed();
-    }
+	public List<string> ListImportablePools() {
+		return openZfsService.ListImportablePools();
+	}
+
+	public List<string> ListImportablePoolsFromDirectory(string dir) {
+		return openZfsService.ListImportablePoolsFromDirectory(dir);
+	}
+
+	public string ListImportablePoolsDetailed() {
+		return openZfsService.ListImportablePoolsDetailed();
+	}
 }
