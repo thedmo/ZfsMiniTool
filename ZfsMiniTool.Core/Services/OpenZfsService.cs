@@ -35,7 +35,10 @@ internal class OpenZfsService
         using var proc = Process.Start(psi);
         var outBuilder = new StringBuilder();
 
-        proc.OutputDataReceived += (s, e) => { if (e.Data != null) outBuilder.AppendLine(e.Data); };
+        if (proc == null)
+            throw new InvalidOperationException($"Failed to start process: {exe} {args}");
+
+		proc.OutputDataReceived += (s, e) => { if (e.Data != null) outBuilder.AppendLine(e.Data); };
         proc.ErrorDataReceived += (s, e) => { if (e.Data != null) outBuilder.AppendLine("[ERR] " + e.Data); };
 
         proc.BeginOutputReadLine();
@@ -93,7 +96,6 @@ internal class OpenZfsService
 
         string key = File.ReadAllText(keyFile).Trim();
 
-        // Run the command without -L flag and pass key as input
         Run("zfs", $"load-key {pool}", key);
     }
 
