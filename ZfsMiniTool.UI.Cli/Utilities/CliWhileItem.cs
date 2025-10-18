@@ -1,5 +1,5 @@
-﻿namespace ZfsMiniTool.Core.Utilities;
-internal class CliWhileItem
+﻿namespace ZfsMiniTool.UI.Cli.Utilities;
+public class CliWhileItem
 {
     public void WhileYesTry(Action action)
     {

@@ -1,9 +1,8 @@
-﻿using ZfsMiniTool.Core.Services;
-using ZfsMiniTool.Core.Utilities;
+﻿using ZfsMiniTool.UI.Cli.Utilities;
 using ZfsMiniTool.Core.ViewModels;
 
-namespace ZfsMiniTool.Core.Views;
-internal class MainViewCli {
+namespace ZfsMiniTool.UI.Cli.Views;
+public class MainViewCli {
 	private MainViewModel dataContext;
 	private bool isRunning = true;
 

@@ -1,4 +1,4 @@
-﻿namespace ZfsMiniTool.Core.Configurations;
+﻿namespace ZfsMiniTool.UI.Cli.Configurations;
 internal class KeyFileStorageConfig
 {
     required public string UserHomeDirectory { get; set; }

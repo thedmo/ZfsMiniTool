@@ -2,7 +2,7 @@
 using System.Text;
 
 namespace ZfsMiniTool.Core.Services;
-internal class OpenZfsService
+public class OpenZfsService
 {
     /// <summary>
     /// Führt ein externes Programm aus und gibt stdout + stderr zurück.

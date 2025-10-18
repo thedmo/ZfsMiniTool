@@ -1,5 +1,5 @@
 ﻿namespace ZfsMiniTool.Core.Services;
-internal class FileSystemService
+public class FileSystemService
 {
     /// <summary>
     /// Writes binary data under given path to disk

@@ -1,9 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
-using ZfsMiniTool.Core.Extensions;
-using ZfsMiniTool.Core.Services;
+﻿using ZfsMiniTool.Core.Services;
 
 namespace ZfsMiniTool.Core.ViewModels;
-internal class MainViewModel {
+public class MainViewModel {
 	private OpenZfsService openZfsService;
 	private FileSystemService fileSystemService;
 

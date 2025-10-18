@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
-using ZfsMiniTool.Core.Configurations;
 
-namespace ZfsMiniTool.Core.Services;
-internal class ConfigurationService
-{
+namespace ZfsMiniTool.UI.Cli.Configurations;
+public class ConfigurationService
+    {
     IConfiguration appConfig;
 
     public string DefaultKeyDirectory
