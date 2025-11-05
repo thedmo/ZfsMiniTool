@@ -15,20 +15,20 @@ public class OpenZfsService
     /// <summary>
     /// Führt ein externes Programm aus und gibt stdout + stderr zurück.
     /// </summary>
-    /// <param name="exe">Executable to run</param>
+    /// <param name="executablePath">Executable to run</param>
     /// <param name="args">Arguments for the executable</param>
     /// <param name="input">Optional input to send to the process stdin</param>
     /// <returns>Combined stdout and stderr output</returns>
-    public string Run(string exe, string args, string? input)
+    public string Run(string executablePath, string args, string? input)
     {
         var psi = new ProcessStartInfo
         {
-            FileName = exe,
+            FileName = executablePath,
             Arguments = args,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
-            RedirectStandardInput = input != null,
-            UseShellExecute = false,
+            RedirectStandardInput = input != null, // true if we have input to send
+			UseShellExecute = false,
             CreateNoWindow = true
         };
 
@@ -36,7 +36,7 @@ public class OpenZfsService
         var outBuilder = new StringBuilder();
 
         if (proc == null)
-            throw new InvalidOperationException($"Failed to start process: {exe} {args}");
+            throw new InvalidOperationException($"Failed to start process: {executablePath} {args}");
 
 		proc.OutputDataReceived += (s, e) => { if (e.Data != null) outBuilder.AppendLine(e.Data); };
         proc.ErrorDataReceived += (s, e) => { if (e.Data != null) outBuilder.AppendLine("[ERR] " + e.Data); };
@@ -55,7 +55,7 @@ public class OpenZfsService
 
         if (proc.ExitCode != 0)
             throw new InvalidOperationException(
-                $"'{exe} {args}' returned exit code {proc.ExitCode}. Output:\n{outBuilder}");
+                $"'{executablePath} {args}' returned exit code {proc.ExitCode}. Output:\n{outBuilder}");
 
         return outBuilder.ToString();
     }
@@ -75,16 +75,15 @@ public class OpenZfsService
 		Run("zpool", @$"create {poolName} \\?\{fullPath}");
 	}
 
-    public string ImportPoolFromFile(string filePath) { 
-        var poolName = Path.GetFileNameWithoutExtension(filePath);
-		return Run("zpool", $"import -d {filePath} {poolName}");
+	public void ExportPool(string pool) {
+		Run("zpool", $"export {pool}");
 	}
 
-	// Wrapper‑Methoden für die einzelnen ZFS‑Operationen
-	public void ExportPool(string pool) => Run("zpool", $"export {pool}");
-    public void ImportPool(string pool) => Run("zpool", $"import {pool}");
+	public void ImportPool(string pool) {
+		Run("zpool", $"import {pool}");
+	}
 
-    public void ImportPoolFromFile(string poolName, string path) {
+	public void ImportPoolFromFile(string poolName, string path) {
 		Run("zpool", $"import -d {path} {poolName}");
 	}
 
@@ -155,17 +154,6 @@ public class OpenZfsService
         }
 
         return datasets;
-    }
-
-    /// <summary>
-    /// Listet alle Datasets eines Pools mit zusätzlichen Informationen auf.
-    /// </summary>
-    /// <param name="pool">Der Name des Pools</param>
-    /// <returns>Formatierte Ausgabe mit Dataset-Informationen</returns>
-    public string ListDatasetsDetailed(string pool)
-    {
-        // Zeigt Name, Used, Available, Refer, Mountpoint
-        return Run("zfs", $"list -r {pool}");
     }
 
     /// <summary>

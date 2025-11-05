@@ -18,6 +18,10 @@ public class MainViewModel {
 		openZfsService.ImportPoolFromFile(poolName, directory);
 	}
 
+	public void CreateFileBasedPool(string poolName, string directory, long sizeInMB) {
+		openZfsService.CreateFileBasedPool(poolName, directory, sizeInMB);
+	}
+
 	public void ExportPool(string poolName) {
 		openZfsService.ExportPool(poolName);
 	}
@@ -52,9 +56,5 @@ public class MainViewModel {
 
 	public List<string> ListImportablePoolsFromDirectory(string dir) {
 		return openZfsService.ListImportablePoolsFromDirectory(dir);
-	}
-
-	public string ListImportablePoolsDetailed() {
-		return openZfsService.ListImportablePoolsDetailed();
 	}
 }
