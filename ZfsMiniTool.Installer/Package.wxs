@@ -1,5 +1,5 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-  <Package Id="TODO_Manufacturer.ZfsMiniTool.Installer" Name="ZfsMiniTool.Installer" Manufacturer="TODO Manufacturer" Version="1.0.0.0">
+  <Package Id="Minja_Soft.ZfsMiniTool.Installer" Name="ZfsMiniTool" Manufacturer="Minja Soft" Version="1.0.0.0">
     <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
 
     <Feature Id="Main">

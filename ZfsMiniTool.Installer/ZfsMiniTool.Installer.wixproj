@@ -1,2 +1,5 @@
 ﻿<Project Sdk="WixToolset.Sdk/6.0.2">
+  <ItemGroup>
+    <ProjectReference Include="..\ZfsMiniTool.UI.Cli\ZfsMiniTool.UI.Cli.csproj" />
+  </ItemGroup>
 </Project>
