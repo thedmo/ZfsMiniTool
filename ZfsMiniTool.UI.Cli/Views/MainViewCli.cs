@@ -1,5 +1,6 @@
 ﻿using ZfsMiniTool.UI.Cli.Utilities;
 using ZfsMiniTool.Core.ViewModels;
+using CommunityToolkit.Mvvm.Input;
 
 namespace ZfsMiniTool.UI.Cli.Views;
 public class MainViewCli {
@@ -106,11 +107,13 @@ public class MainViewCli {
 		Console.WriteLine();
 	}
 
-	private void ImportPoolOperation() {
+	private void ImportPoolOperation()
+	{
 		Console.Write("Pool-Name eingeben: ");
 		var poolName = Console.ReadLine();
 
-		if (string.IsNullOrWhiteSpace(poolName)) {
+		if (string.IsNullOrWhiteSpace(poolName))
+		{
 			Console.WriteLine("Pool-Name darf nicht leer sein.");
 			return;
 		}
@@ -137,7 +140,9 @@ public class MainViewCli {
 			return;
 		}
 
-		Console.WriteLine("Lade Schlüssel …");
+		keyPath.Replace("\"", ""); // removes quotes, if there are any
+
+        Console.WriteLine("Lade Schlüssel …");
 		dataContext.LoadKey(poolName, keyPath);
 		Console.WriteLine("Schlüssel erfolgreich geladen!");
 	}
