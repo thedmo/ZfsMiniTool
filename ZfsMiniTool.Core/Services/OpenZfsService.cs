@@ -95,6 +95,11 @@ public class OpenZfsService
 
         string key = File.ReadAllText(keyFile).Trim();
 
+        LoadKeyFromString(pool, key);
+    }
+
+    public void LoadKeyFromString(string pool, string key)
+    {
         Run("zfs", $"load-key {pool}", key);
     }
 

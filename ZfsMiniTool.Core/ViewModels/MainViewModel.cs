@@ -30,7 +30,11 @@ public class MainViewModel {
 		openZfsService.LoadKey(poolName, keyPath);
 	}
 
-	public void SetDriveLetter(string datasetName, char driveLetter) {
+	public void LoadKeyFromString(string poolName, string keyString) {
+		openZfsService.LoadKeyFromString(poolName, keyString);
+    }
+
+    public void SetDriveLetter(string datasetName, char driveLetter) {
 		openZfsService.SetDriveLetter(datasetName, true, driveLetter);
 	}
 

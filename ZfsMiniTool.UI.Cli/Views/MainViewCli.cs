@@ -14,13 +14,14 @@ public class MainViewCli {
 		cliMenuItems = new List<CliMenuItem>() {
 		new (){MenuSwitch ="1",  Description = "Importierbare Pools auflisten", ItemAction = ShowSimpleImportablePoolsList },
 		new (){MenuSwitch ="2",  Description = "Importierbare Pools in Verzeichnis auflisten", ItemAction = ShowSimpleImportablePoolsListFromdirectory },
-		new (){MenuSwitch ="3",  Description = "Key laden",ItemAction = LoadKeyOperation },
-		new (){MenuSwitch ="4",  Description = "Pool importieren",ItemAction = ImportPoolOperation },
-		new (){MenuSwitch ="5",  Description = "Pool aus Datei importieren",ItemAction = ImportPoolFromFile },
-		new (){MenuSwitch ="6",  Description = "Pool exportieren",ItemAction = ExportPool },
-		new (){MenuSwitch ="7",  Description = "Drive-Letter setzen",ItemAction = SetDriveLetterOperation },
-		new (){MenuSwitch ="8",  Description = "Dataset mounten",ItemAction = MountDatasetOperation },
-		new (){MenuSwitch ="9",  Description = "Datasets auflisten",ItemAction = ListDatasetsOperation},
+		new (){MenuSwitch ="3",  Description = "Keyfile laden",ItemAction = LoadKeyFromFileOperation },
+		new (){MenuSwitch ="4",  Description = "Key eingeben",ItemAction = LoadKeyFromCliOperation },
+		new (){MenuSwitch ="5",  Description = "Pool importieren",ItemAction = ImportPoolOperation },
+		new (){MenuSwitch ="6",  Description = "Pool aus Datei importieren",ItemAction = ImportPoolFromFile },
+		new (){MenuSwitch ="7",  Description = "Pool exportieren",ItemAction = ExportPool },
+		new (){MenuSwitch ="8",  Description = "Drive-Letter setzen",ItemAction = SetDriveLetterOperation },
+		new (){MenuSwitch ="9",  Description = "Dataset mounten",ItemAction = MountDatasetOperation },
+		new (){MenuSwitch ="10",  Description = "Datasets auflisten",ItemAction = ListDatasetsOperation},
 		new (){MenuSwitch ="q", Description = "Beenden" , ItemAction = QuitApplication},
 		};
 	}
@@ -119,7 +120,7 @@ public class MainViewCli {
 		Console.WriteLine("Pool erfolgreich importiert!");
 	}
 
-	private void LoadKeyOperation() {
+	private void LoadKeyFromFileOperation() {
 		Console.Write("Pool-Name eingeben: ");
 		var poolName = Console.ReadLine();
 
@@ -140,6 +141,25 @@ public class MainViewCli {
 		dataContext.LoadKey(poolName, keyPath);
 		Console.WriteLine("Schlüssel erfolgreich geladen!");
 	}
+
+	private void LoadKeyFromCliOperation()
+	{
+			Console.Write("Pool-Name eingeben: ");
+		var poolName = Console.ReadLine();
+		if (string.IsNullOrWhiteSpace(poolName)) {
+			Console.WriteLine("Pool-Name darf nicht leer sein.");
+			return;
+		}
+		Console.Write("Geben Sie den Schlüssel ein: ");
+		var key = Console.ReadLine();
+		if (string.IsNullOrWhiteSpace(key)) {
+			Console.WriteLine("Schlüssel darf nicht leer sein.");
+			return;
+		}
+		Console.WriteLine("Lade Schlüssel …");
+		dataContext.LoadKeyFromString(poolName, key);
+		Console.WriteLine("Schlüssel erfolgreich geladen!");
+    }
 
 	private void SetDriveLetterOperation() {
 		Console.Write("Dataset-Name eingeben: ");
