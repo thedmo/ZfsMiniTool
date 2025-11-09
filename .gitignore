@@ -54,3 +54,4 @@ TestResult.xml
 nunit-*.xml
 /.vs
 /.vscode
+/ZfsMiniTool.Installer/publish_ComponentGroup.wxs
