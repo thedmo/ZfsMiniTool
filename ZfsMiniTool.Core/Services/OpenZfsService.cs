@@ -1,34 +1,42 @@
 ﻿using System.Diagnostics;
 using System.Text;
+using ZfsMiniTool.Core.Models;
 
 namespace ZfsMiniTool.Core.Services;
+
 public class OpenZfsService
 {
-    public void CreateFileBasedPool(string poolName, string directory, long sizeInMB) {
-		// Create a sparse file of the specified size
-		using (var fs = new FileStream(directory, FileMode.Create, FileAccess.Write, FileShare.None)) {
-			fs.SetLength(sizeInMB * 1024 * 1024);
-		}
+
+    public void CreateFileBasedPool(string poolName, string directory, long sizeInMB)
+    {
+        // Create a sparse file of the specified size
+        using (var fs = new FileStream(directory, FileMode.Create, FileAccess.Write, FileShare.None))
+        {
+            fs.SetLength(sizeInMB * 1024 * 1024);
+        }
 
         var fullPath = Path.Combine(directory, poolName, ".zdev");
 
-		CommandLineRunner.Run("fsutil", $"{fullPath}");
+        CommandLineRunner.Run("fsutil", $"{fullPath}");
 
         // Create the ZFS pool using the sparse file
         CommandLineRunner.Run("zpool", @$"create {poolName} \\?\{fullPath}");
-	}
+    }
 
-	public void ExportPool(string pool) {
-		CommandLineRunner.Run("zpool", $"export {pool}");
-	}
+    public void ExportPool(string pool)
+    {
+        CommandLineRunner.Run("zpool", $"export {pool}");
+    }
 
-	public void ImportPool(string pool) {
-		CommandLineRunner.Run("zpool", $"import {pool}");
-	}
+    public void ImportPool(string pool)
+    {
+        CommandLineRunner.Run("zpool", $"import {pool}");
+    }
 
-	public void ImportPoolFromFile(string poolName, string path) {
-		CommandLineRunner.Run("zpool", $"import -d {path} {poolName}");
-	}
+    public void ImportPoolFromFile(string poolName, string path)
+    {
+        CommandLineRunner.Run("zpool", $"import -d {path} {poolName}");
+    }
 
     public void LoadKey(string pool, string keyFile)
     {
@@ -122,33 +130,23 @@ public class OpenZfsService
         return GetPoolsFromOutput(output);
     }
 
-    private static List<string> GetPoolsFromOutput(string output)
+    private List<string> GetPoolsFromOutput(string output)
     {
-        var pools = new List<string>();
+        var poolStrings = new List<string>();
         var lines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var line in lines)
         {
-            var trimmedLine = line.Trim();
+            var poolName = line.Trim();
 
-            if (string.IsNullOrEmpty(trimmedLine)
-                || trimmedLine.StartsWith("[ERR]")
-                || !trimmedLine.StartsWith("pool: "))
+            if (string.IsNullOrEmpty(poolName)
+                || poolName.StartsWith("[ERR]")
+                || !poolName.StartsWith("pool: "))
                 continue;
 
-            pools.Add(trimmedLine);
+            poolStrings.Add(poolName);
         }
 
-        return pools;
-    }
-
-    /// <summary>
-    /// Listet alle importierbaren Pools mit detaillierten Informationen auf.
-    /// </summary>
-    /// <returns>Formatierte Ausgabe mit Pool-Informationen</returns>
-    public string ListImportablePoolsDetailed()
-    {
-        // Zeigt detaillierte Informationen über importierbare Pools
-        return CommandLineRunner.Run("zpool", "import");
+        return poolStrings;
     }
 }
