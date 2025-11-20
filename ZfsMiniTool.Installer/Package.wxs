@@ -1,11 +1,15 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-  <Package Id="Minja_Soft.ZfsMiniTool.Installer" Name="ZfsMiniTool" Manufacturer="Minja Soft" Version="1.0.0.0">
-    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+  <Package Id="Minja_Soft.ZfsMiniTool.Installer"
+           Name="ZfsMiniTool"
+           Manufacturer="Minja Soft"
+           Version="0.1.0.0">
+    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)"
+                  AllowSameVersionUpgrades="yes" />
 
     <MediaTemplate EmbedCab="true"/>
-    
+
     <Feature Id="Main">
-      <ComponentGroupRef Id="publish_ComponentGroup" />
+      <ComponentGroupRef Id="ZfsMiniToolComponents" />
     </Feature>
   </Package>
 </Wix>

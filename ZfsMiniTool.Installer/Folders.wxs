@@ -7,8 +7,5 @@
                    Name="!(bind.Property.ProductName)"/>
       </Directory>
     </StandardDirectory>
-
-    <Directory Id="SOURCEFOLDER"
-               Name="..\ZfsMiniTool.UI.Cli\bin\$(Configuration)" />
   </Fragment>
 </Wix>
