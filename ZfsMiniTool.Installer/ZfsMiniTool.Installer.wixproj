@@ -1,8 +1,0 @@
-﻿<Project Sdk="WixToolset.Sdk/6.0.2">
-  <ItemGroup>
-    <ProjectReference Include="..\ZfsMiniTool.UI.Cli\ZfsMiniTool.UI.Cli.csproj" />
-  </ItemGroup>
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="dotnet publish --configuration Release $(SolutionDir)ZfsMiniTool.UI.Cli\ZfsMiniTool.UI.Cli.csproj&#xD;&#xA;$(ProjectDir)WixComponentCreator.CLI.exe generate -s $(SolutionDir)ZfsMiniTool.UI.Cli\bin\Release\net8.0\win-x64\publish\ -o $(ProjectDir)\publish_ComponentGroup.wxs -v" />
-  </Target>
-</Project>

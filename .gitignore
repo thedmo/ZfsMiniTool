@@ -55,3 +55,4 @@ nunit-*.xml
 /.vs
 /.vscode
 /ZfsMiniTool.Installer/publish_ComponentGroup.wxs
+/ZfsMiniTool.Installer/ZfsMiniTool.Installer.wixproj
