@@ -1,20 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>Exe</OutputType>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
-		<SelfContained>true</SelfContained>
-		<ApplicationManifest>app.manifest</ApplicationManifest>
-	</PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+    <SelfContained>true</SelfContained>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>ZfsMiniTool.ico</ApplicationIcon>
+    <SignAssembly>False</SignAssembly>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <Title>Zfs Minitool</Title>
+    <AssemblyName>$(AssemblyName)</AssemblyName>
+    <NeutralLanguage>en-001</NeutralLanguage>
+    <StartupObject>ZfsMiniTool.UI.Cli.Program</StartupObject>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\ZfsMiniTool.Core\ZfsMiniTool.Core.csproj" />
-	</ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
 
-	<ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="ZfsMiniTool.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\ZfsMiniTool.Core\ZfsMiniTool.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
