@@ -4,63 +4,6 @@ using System.Text;
 namespace ZfsMiniTool.Core.Services;
 public class OpenZfsService
 {
-    /// <summary>
-    /// Führt ein externes Programm aus und gibt stdout + stderr zurück.
-    /// </summary>
-    public string Run(string exe, string args)
-    {
-        return Run(exe, args, null);
-    }
-
-    /// <summary>
-    /// Führt ein externes Programm aus und gibt stdout + stderr zurück.
-    /// </summary>
-    /// <param name="executablePath">Executable to run</param>
-    /// <param name="args">Arguments for the executable</param>
-    /// <param name="input">Optional input to send to the process stdin</param>
-    /// <returns>Combined stdout and stderr output</returns>
-    public string Run(string executablePath, string args, string? input)
-    {
-        var psi = new ProcessStartInfo
-        {
-            FileName = executablePath,
-            Arguments = args,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            RedirectStandardInput = input != null, // true if we have input to send
-			UseShellExecute = false,
-            CreateNoWindow = true
-        };
-
-        using var proc = Process.Start(psi);
-        var outBuilder = new StringBuilder();
-
-        if (proc == null)
-            throw new InvalidOperationException($"Failed to start process: {executablePath} {args}");
-
-		proc.OutputDataReceived += (s, e) => { if (e.Data != null) outBuilder.AppendLine(e.Data); };
-        proc.ErrorDataReceived += (s, e) => { if (e.Data != null) outBuilder.AppendLine("[ERR] " + e.Data); };
-
-        proc.BeginOutputReadLine();
-        proc.BeginErrorReadLine();
-
-        // Send input if provided
-        if (input != null)
-        {
-            proc.StandardInput.WriteLine(input);
-            proc.StandardInput.Close();
-        }
-
-        proc.WaitForExit();
-
-        if (proc.ExitCode != 0)
-            throw new InvalidOperationException(
-                $"'{executablePath} {args}' returned exit code {proc.ExitCode}. Output:\n{outBuilder}");
-
-        return outBuilder.ToString();
-    }
-
-
     public void CreateFileBasedPool(string poolName, string directory, long sizeInMB) {
 		// Create a sparse file of the specified size
 		using (var fs = new FileStream(directory, FileMode.Create, FileAccess.Write, FileShare.None)) {
@@ -69,22 +12,22 @@ public class OpenZfsService
 
         var fullPath = Path.Combine(directory, poolName, ".zdev");
 
-		Run("fsutil", $"{fullPath}");
+		CommandLineRunner.Run("fsutil", $"{fullPath}");
 
-		// Create the ZFS pool using the sparse file
-		Run("zpool", @$"create {poolName} \\?\{fullPath}");
+        // Create the ZFS pool using the sparse file
+        CommandLineRunner.Run("zpool", @$"create {poolName} \\?\{fullPath}");
 	}
 
 	public void ExportPool(string pool) {
-		Run("zpool", $"export {pool}");
+		CommandLineRunner.Run("zpool", $"export {pool}");
 	}
 
 	public void ImportPool(string pool) {
-		Run("zpool", $"import {pool}");
+		CommandLineRunner.Run("zpool", $"import {pool}");
 	}
 
 	public void ImportPoolFromFile(string poolName, string path) {
-		Run("zpool", $"import -d {path} {poolName}");
+		CommandLineRunner.Run("zpool", $"import -d {path} {poolName}");
 	}
 
     public void LoadKey(string pool, string keyFile)
@@ -100,7 +43,7 @@ public class OpenZfsService
 
     public void LoadKeyFromString(string pool, string key)
     {
-        Run("zfs", $"load-key {pool}", key);
+        CommandLineRunner.Run("zfs", $"load-key {pool}", key);
     }
 
     public void SetDriveLetter(string dataset, bool on, char? letter = null)
@@ -123,14 +66,14 @@ public class OpenZfsService
             value = "off";
         }
 
-        Run("zfs", $"set driveletter={value} {dataset}");
+        CommandLineRunner.Run("zfs", $"set driveletter={value} {dataset}");
     }
 
     public void MountDataset(string dataset, string? mountPoint = null)
     {
         // Ohne mountpoint-Argument wird das standardmäßige Drive‑Letter‑Verhalten verwendet.
         string args = mountPoint == null ? $"{dataset}" : $"{dataset} {mountPoint}";
-        Run("zfs", $"mount {args}");
+        CommandLineRunner.Run("zfs", $"mount {args}");
     }
 
     /// <summary>
@@ -143,7 +86,7 @@ public class OpenZfsService
         // Verwende -H für script-freundliche Ausgabe (keine Header)
         // -o name gibt nur die Namen aus
         // -r für rekursive Auflistung aller Datasets im Pool
-        string output = Run("zfs", $"list -H -o name -r {pool}");
+        string output = CommandLineRunner.Run("zfs", $"list -H -o name -r {pool}");
 
         var datasets = new List<string>();
         var lines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
@@ -168,13 +111,13 @@ public class OpenZfsService
     public List<string> ListImportablePools()
     {
         // -o name gibt nur die Pool-Namen aus
-        string output = Run("zpool", "import -o name");
+        string output = CommandLineRunner.Run("zpool", "import -o name");
         return GetPoolsFromOutput(output);
     }
 
     public List<string> ListImportablePoolsFromDirectory(string directory)
     {
-        string output = Run("zpool", $"import -d {directory}");
+        string output = CommandLineRunner.Run("zpool", $"import -d {directory}");
 
         return GetPoolsFromOutput(output);
     }
@@ -199,7 +142,6 @@ public class OpenZfsService
         return pools;
     }
 
-
     /// <summary>
     /// Listet alle importierbaren Pools mit detaillierten Informationen auf.
     /// </summary>
@@ -207,6 +149,6 @@ public class OpenZfsService
     public string ListImportablePoolsDetailed()
     {
         // Zeigt detaillierte Informationen über importierbare Pools
-        return Run("zpool", "import");
+        return CommandLineRunner.Run("zpool", "import");
     }
 }
